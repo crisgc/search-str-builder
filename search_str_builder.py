@@ -44,13 +44,41 @@ def is_complex_string(string_to_test):
     return (' ' in string_to_test)
 
 
+def round_str(base, prefix, suffix=None):
+    """
+    Put a preffix and a suffix around a base string
+
+    Args:
+        base: the base string
+        prefix: the prefix to append
+        suffix: the suffix to append
+
+    Return:
+        the new string
+
+    """
+    if suffix == None:
+        suffix = prefix
+
+    result = prefix + base + suffix
+    return result
+
+def round_brackets(base):
+    return round_str(base, '(', ')')
+
+def round_appostrofe(base):
+    return round_str(base, '\"')
+
+
+        
 def build_search_str(string_ast, groups, map_dict):
     """
     Monta um string de pesquisa
     """
-    if isinstance(string_ast, basicstring):
-        if
-        return string_ast
+    # Base case
+    if isinstance(string_ast, basestring):
+        if is_complex_string(string_ast):
+            return round_appostrofe
 
 def build_search_string(search_dict, map_dict=None):
     # TODO essa função deve separar as strings e os grupos
@@ -66,16 +94,15 @@ def build_search_string(search_dict, map_dict=None):
     string_trees = [ value for (key,value) in search_dict.iteritems() if type(key)
             == int ]
 
-    pass   
 
 def main():
     ast = {'__groups__': 
             { 
                 'group1': ['test']
                 }, 
-            1 : {'__group__': 'group1'}
+            1 : 'test' # {'__group__': 'group1'}
             }
-    build_search_string(ast)
+    print build_search_string(ast)
 
 if __name__ == '__main__':
     # TODO transformar esse teste em um teste unitário
