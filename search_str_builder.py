@@ -27,15 +27,13 @@ Esses operadores serão transformados
 
 # O tipo de um objeto pode ser testado através da função type:  ("K!=goo.gl/8Mh2W0)
 
-
 # TODO verificar como pode ser lido argumentos da linha de
 
-"""
-Programa para gerar uma string de pesquisa a partir de grupos e conectores
-logicos
-"""
-
-DEFAULT_MAP = dict(__and__='and', __or__='or')
+AND_KEY = '__and__'
+OR_KEY = '__or__'
+GROUP_KEY = '__group__'
+GROUPS_KEY = '__groups__'
+DEFAULT_MAP = { AND_KEY: 'AND', OR_KEY: 'OR'}
 
 def is_complex_string(string_to_test):
     """
@@ -69,18 +67,54 @@ def round_brackets(base):
 def round_appostrofe(base):
     return round_str(base, '\"')
 
+def build_search_str(ast, groups, map_dict, groups_join_oprt=None): 
 
-        
-def build_search_str(string_ast, groups, map_dict):
+    if groups_join_oprt is None:
+        groups_join_oprt = OR_KEY
+
+    def is_logic(oprt):
+        """
+        Testa se a ast é um operador lógico
+
+        Args:
+            oprt: O operador a ser testado
+        """
+        return_value = isinstance(ast, dict) and (oprt in ast)
+        return return_value
+
+    def build_oprt(oprt, terms=None):
+        """
+        Monta uma string com operadores lógicos
+        """
+        if terms is None:
+            terms = ast[oprt]
+
+        children = [build_search_str(term, groups, map_dict) for term in
+                terms ]
+        join_str = round_str(map_dict[oprt], ' ')
+        return join_str.join(children)
+
     """
     Monta um string de pesquisa
     """
-    # Base case
-    if isinstance(string_ast, basestring):
-        if is_complex_string(string_ast):
-            return round_appostrofe
+    if isinstance(ast, basestring):
+        # Caso base
+        if is_complex_string(ast):
+            search_str = round_appostrofe(ast)
+        else:
+            search_str = ast
+        return search_str
+    elif isinstance(ast, dict):
+        # Casos recursivos       
+        for logic in [AND_KEY, OR_KEY]:
+            if is_logic(logic): 
+                return round_brackets(build_oprt(logic))
+        if GROUP_KEY in ast:
+            return build_oprt(groups_join_oprt, groups[ast[GROUP_KEY]])
+            
+    # Caso em que é um operador
 
-def build_search_string(search_dict, map_dict=None):
+def build_search_strings(search_dict, map_dict=None):
     # TODO essa função deve separar as strings e os grupos
     """
     Monta as strings de pesquisa
@@ -91,18 +125,26 @@ def build_search_string(search_dict, map_dict=None):
     if map_dict is None:
         map_dict = DEFAULT_MAP
 
-    string_trees = [ value for (key,value) in search_dict.iteritems() if type(key)
+    trees = [ value for (key,value) in search_dict.iteritems() if type(key)
             == int ]
+    groups = search_dict['__groups__'];
+    
+    # TODO remover esses print no final   
+    print trees
+    print groups
 
+    search_strings = [build_search_str(tree, groups, map_dict) for tree in
+            trees]
+    return search_strings
 
 def main():
     ast = {'__groups__': 
             { 
-                'group1': ['test']
+                'group1': ['group1member1', 'group1member2']
                 }, 
-            1 : 'test' # {'__group__': 'group1'}
+            1 : { AND_KEY: [ {GROUP_KEY: 'group1'}, 'test2' , 'test3' ] } # {'__group__': 'group1'}
             }
-    print build_search_string(ast)
+    print build_search_strings(ast)
 
 if __name__ == '__main__':
     # TODO transformar esse teste em um teste unitário
