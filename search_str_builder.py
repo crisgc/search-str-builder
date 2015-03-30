@@ -150,21 +150,14 @@ def main():
     # Fazendo o parse na linha de comando
     parser = argparse.ArgumentParser()
     parser.add_argument('filename', help='The file name')
+    parser.add_argument('--out')
     args = parser.parse_args()
 
     log.basicConfig(level=log.DEBUG)
 
     log.debug(args.filename)
-    read_file(args.filename)
+    ast = read_file(args.filename)
 
-    ast = read_file(
-
-    ast = {'__groups__': 
-            { 
-                'group1': ['group1member1', 'group1member2']
-                }, 
-            "1" : { AND_KEY: [ {GROUP_KEY: 'group1'}, 'test2' , 'test3' ] } # {'__group__': 'group1'}
-            }
     print build_search_strings(ast)
 
 # TODO criar a função para ler de arquivo
