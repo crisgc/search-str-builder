@@ -72,7 +72,7 @@ def build_search_str(ast, groups, map_dict, groups_join_oprt=None):
     if groups_join_oprt is None:
         groups_join_oprt = OR_KEY
 
-    def is_logic(oprt):
+    def is_oprt(oprt):
         """
         Testa se a ast é um operador lógico
 
@@ -81,6 +81,9 @@ def build_search_str(ast, groups, map_dict, groups_join_oprt=None):
         """
         return_value = isinstance(ast, dict) and (oprt in ast)
         return return_value
+
+    def is_group():
+        return GROUP_KEY in ast
 
     def build_oprt(oprt, terms=None):
         """
@@ -103,15 +106,17 @@ def build_search_str(ast, groups, map_dict, groups_join_oprt=None):
             search_str = round_appostrofe(ast)
         else:
             search_str = ast
-        return search_str
     elif isinstance(ast, dict):
-        # Casos recursivos       
-        for logic in [AND_KEY, OR_KEY]:
-            if is_logic(logic): 
-                return round_brackets(build_oprt(logic))
-        if GROUP_KEY in ast:
-            return build_oprt(groups_join_oprt, groups[ast[GROUP_KEY]])
-            
+        # Casos recursivos             
+        for join_oprt in [AND_KEY, OR_KEY]:
+            if is_oprt(join_oprt): 
+                search_str = round_brackets(build_oprt(join_oprt))
+
+        if is_group():
+            search_str = build_oprt(groups_join_oprt, groups[ast[GROUP_KEY]])
+            search_str = round_brackets(search_str)
+
+    return search_str
     # Caso em que é um operador
 
 def build_search_strings(search_dict, map_dict=None):
@@ -138,6 +143,7 @@ def build_search_strings(search_dict, map_dict=None):
     return search_strings
 
 def main():
+
     ast = {'__groups__': 
             { 
                 'group1': ['group1member1', 'group1member2']
@@ -146,7 +152,8 @@ def main():
             }
     print build_search_strings(ast)
 
+# TODO criar a função para ler de arquivo
+
 if __name__ == '__main__':
     # TODO transformar esse teste em um teste unitário
-
     main()
