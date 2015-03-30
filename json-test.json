@@ -1,0 +1,6 @@
+{ "__groups__":  
+    { 
+        "group1": ["group1member1", "group1member2"]
+    }, 
+"1" : { "__and__": [ { "__group__": "group1"}, "test2" , "test3" ] }
+}

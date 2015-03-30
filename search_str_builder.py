@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+import argparse
+import json
+import logging as log
+
 """
 Possui funções para montar strings de pesquisa Para uma determinada plataforma.
 
@@ -130,8 +134,7 @@ def build_search_strings(search_dict, map_dict=None):
     if map_dict is None:
         map_dict = DEFAULT_MAP
 
-    trees = [ value for (key,value) in search_dict.iteritems() if type(key)
-            == int ]
+    trees = [ value for (key,value) in search_dict.iteritems() if key.isdigit() ]
     groups = search_dict['__groups__'];
     
     # TODO remover esses print no final   
@@ -143,16 +146,41 @@ def build_search_strings(search_dict, map_dict=None):
     return search_strings
 
 def main():
+   
+    # Fazendo o parse na linha de comando
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filename', help='The file name')
+    args = parser.parse_args()
+
+    log.basicConfig(level=log.DEBUG)
+
+    log.debug(args.filename)
+    read_file(args.filename)
+
+    ast = read_file(
 
     ast = {'__groups__': 
             { 
                 'group1': ['group1member1', 'group1member2']
                 }, 
-            1 : { AND_KEY: [ {GROUP_KEY: 'group1'}, 'test2' , 'test3' ] } # {'__group__': 'group1'}
+            "1" : { AND_KEY: [ {GROUP_KEY: 'group1'}, 'test2' , 'test3' ] } # {'__group__': 'group1'}
             }
     print build_search_strings(ast)
 
 # TODO criar a função para ler de arquivo
+def read_file(filename):
+    """
+    Lê o arquivo JSON
+
+    Args:
+        filename=O arquivo a ser lido
+    """
+
+    f = file(filename, mode='r')
+    structure = json.load(f)
+    log.debug(structure)
+    f.close()
+    return structure
 
 if __name__ == '__main__':
     # TODO transformar esse teste em um teste unitário

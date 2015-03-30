@@ -1,1 +1,2 @@
 x Fazer a função de arrendondar com aspas
+Criar a função para ler de um arquivo
