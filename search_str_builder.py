@@ -134,13 +134,11 @@ def build_search_strings(search_dict, map_dict=None):
     if map_dict is None:
         map_dict = DEFAULT_MAP
 
-    trees = [ value for (key,value) in search_dict.iteritems() if key.isdigit() ]
+    trees = sorted([ (key, value) for (key,value) in search_dict.iteritems() if
+        key.isdigit() ], key=lambda x: x[0])
+    trees = [value for (key, value) in trees]
     groups = search_dict['__groups__'];
     
-    # TODO remover esses print no final   
-    print trees
-    print groups
-
     search_strings = [build_search_str(tree, groups, map_dict) for tree in
             trees]
     return search_strings
@@ -158,7 +156,15 @@ def main():
     log.debug(args.filename)
     ast = read_file(args.filename)
 
-    print build_search_strings(ast)
+    # Imprime
+    result = build_search_strings(ast)
+    result = '\n'.join(result)
+    if args.out:
+        out_file = open(args.out, mode = 'w')
+        out_file.write(result)
+        out_file.close()
+    else:
+        print build_search_strings(ast)
 
 # TODO criar a função para ler de arquivo
 def read_file(filename):
