@@ -2,3 +2,4 @@ x Fazer a função de arrendondar com aspas
 Criar a função para ler de um arquivo
 Ordenar alfabeticamente os termos dentro de um grupo
 Empacotar a aplicação python (ver goo.gl/drt0Ll)
+Retornar a string montada em formato JSON
