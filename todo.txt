@@ -5,3 +5,8 @@ Ao receber o mapeamento, indicar o nome da base de dados +programming
 Fazer script para gerar grafo de pesquisa a partir das informações de um json +programming
 Aprender Sphinx para gerar a documentação do projeto +docs
 Fazer script para gerar latex a partir das strings de pesquisa +programming
+x Fazer a função de arrendondar com aspas
+Criar a função para ler de um arquivo
+Ordenar alfabeticamente os termos dentro de um grupo
+Retornar a string montada em formato JSON
+Fazer o keywords parser sort-friendly
